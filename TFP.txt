@@ -1,0 +1,82 @@
+	
+								
+				TASTY FOOD PROTOCOL
+							
+			       PROTOCOL SPECIFICATION
+
+						  
+						  
+				    April 2016
+								 
+								 
+								 
+								 
+								 
+				   prepared for
+								
+			Communication course - Spring Semester
+			   Department of Information Systems
+				University of Haifa
+								 
+								 
+								 
+					 by
+									 
+				    Tom Yanovich
+					  &
+				   Roy Rozentouler
+							 
+							 
+	
+
+	1. Tasty Food Protocol (TFP) is an application layer protocol over TCP that
+	supports communication between multiple clients and a main server
+	regarding purchase of food ingredients from a central inventory. The
+	connection starts with the client's first request message and finishes
+	with the client's order approval.
+	
+	2. After receiving clients' requests for ingredients at port 9999, the server
+	replies with an approval/decline message according to the amount of the requested
+	ingredients in the inventory. When a client fills up his cart, an order 
+	request is being sent to the server. The server then checks again the 
+	customer's requested items and approves/declines the purchase according to
+	the updated amount of each requested item in stock.
+	
+	3. If the purchase is approved, the server updates the inventory. After all
+	clients have finished, the server closes his ServerSocket and prints the
+	list of the ingredients in the inventory.
+	
+	4. Each of the follwing messages is transferred as a String encoded in UTF,
+	   and its fields are seperated with a ' ' (space) character.
+	
+		4.1 Ingredient Request:
+	
+		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+		   |          Client ID           |       	Action	           |
+		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+		   |        Ingredient No.        |       Ingredient Quantity      |
+		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+		   
+		   Client ID - The client's number.
+		   Action - 'ORD' (Order).
+					'BUY' (request to purchase a cart).
+					'FIN' (request to close connection).
+		   Ingredient No. - The ID of the requested ingredient (optional).
+		   Ingredient Quantity - The quantity of the requested ingredient 
+		   (optional).
+	
+		4.2	Ingredient Response:
+   
+		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+		   |           ACK/NACK           |        	ORD		   |
+		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+		   |        Ingredient No.        |       Ingredient Quantity      |
+		   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+		   
+		   ACK/NACK - 'ACK' (approving the client's request).
+					  'NACK' (declining the client's request).
+		   ORD - 'ORD' if the ACK/NACK refers to the entire cart (otherwise '#').
+		   Ingredient No. - The ID of the requested ingredient (optional).
+		   Ingredient Quantity - The amount of the ingredient cuurently in the 
+		   inventory(optional).
+		   
